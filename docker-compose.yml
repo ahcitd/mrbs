@@ -1,0 +1,37 @@
+version: "3.8"
+
+services:
+  mrbs:
+    image: dorianim/mrbs
+    container_name: mrbs
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${MRBS_TZ}
+      - DB_HOST=${DB_HOST}
+      - DB_USER=${DB_USER}
+      - DB_PASS=${DB_PASS}
+      - DB_DATABASE=${DB_DATABASE}
+      - DB_TYPE=${DB_TYPE}
+    volumes:
+      - ./config/mrbs:/config
+    ports:
+      - "${MRBS_PORT}:80"
+    restart: unless-stopped
+    depends_on:
+      - mrbs-db
+
+  mrbs-db:
+    image: mariadb:latest
+    container_name: mrbs-db
+    environment:
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - TZ=${DB_TZ}
+      - MYSQL_DATABASE=${DB_DATABASE}
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_PASSWORD=${DB_PASS}
+    volumes:
+      - ./config/mysql:/var/lib/mysql
+    restart: unless-stopped
